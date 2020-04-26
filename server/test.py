@@ -28,7 +28,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from webdriver_manager.chrome import ChromeDriverManager
 
-WEB_HOOK_URL = "https://hooks.slack.com/services/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"
+WEB_HOOK_URL = "https://hooks.slack.com/services/xxxxxxxxx/xxxxxxxxxx/xxxxxxx"
 
 def l2str(s):
     str1 = ""
