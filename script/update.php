@@ -1,18 +1,13 @@
 <?php
-header("Content-Type: text/html; charset=UTF-8");
-set_time_limit( 0 );
-echo str_repeat( ' ', 1024 );
-
-function MyFlush(){
- flush();
- ob_end_flush();
- ob_start();
-}
-
 echo "<h1>情報を更新しています...</h1>";
+echo str_pad(" ",4096)."<br/>";
+
 ob_start();
 ob_end_flush();
 ob_start('mb_output_handler');
+
+set_time_limit( 0 );
+
 ini_set('display_errors', 1);
 ini_set('error_reporting', E_ALL);
 
@@ -20,10 +15,12 @@ ini_set('error_reporting', E_ALL);
 
 set_include_path(get_include_path().':/home/k-consulting-o/www/scraping/script/phpseclib');
 echo get_include_path();
+
 include('Net/SSH2.php');
 include('Crypt/RSA.php');
 
 echo " Connecting SSH...<br/>";
+
 MyFlush();
 $key = new Crypt_RSA();
 $file = file_get_contents('/home/k-consulting-o/.ssh/scraping_rsa');
@@ -47,6 +44,7 @@ try {
     echo $ssh->exec('/usr/bin/python3 /opt/scraping/test.py');
 
     echo "Finish Exec /usr/bin/python3 /opt/scraping/test.py<br/>";
+
     ob_flush();
     flush();
 
@@ -84,8 +82,8 @@ ob_flush();
 flush();
 
 // connect database
-$dsn = 'mysql:dbname=k-consulting-o_scraping;host=mysql623.db.sakura.ne.jp';
-$u='k-consulting-o'; $pw='85t1716h';
+$dsn = 'mysql:dbname=scraping;host=localhost';
+$u='user'; $pw='pass';
 $pdo = new PDO($dsn, $u, $pw);
 
 // truncate table
