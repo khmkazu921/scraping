@@ -18,7 +18,7 @@ $all = $stmt->fetchAll();
 	<script>
 	 let numRow = 20;
 	 var all = <?=json_encode($all)?>;
-	 all = all.sort((v0,v1) => (v0.updated < v1.updated));
+	 all = all.sort((v0,v1) => (v0.updated < v1.updated)?1:-1);
 	 var json = all;
 	 var page = 1;
 	 var echa = filterJson("ECHA",    all);
