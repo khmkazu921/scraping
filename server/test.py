@@ -11,7 +11,6 @@ from urllib.request import urlretrieve, urlopen, Request
 from os import makedirs
 import os.path, time, re
 import datetime
-from datetime import datetime
 import calendar
 from googletrans import Translator
 import traceback
@@ -28,7 +27,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from webdriver_manager.chrome import ChromeDriverManager
 
-WEB_HOOK_URL = "https://hooks.slack.com/services/xxxxxxxxx/xxxxxxxxxx/xxxxxxx"
+WEB_HOOK_URL = "https://hooks.slack.com/services/**********/*********/************"
+tr = Translator()
+DIFF_JST_FROM_UTC = 9
+diff = datetime.timedelta(hours=DIFF_JST_FROM_UTC)
+now = datetime.datetime.utcnow() + diff
+today = now.strftime('%Y-%m-%d')
 
 def l2str(s):
     str1 = ""
@@ -63,6 +67,7 @@ def ncis():
             tmp2 = a.find_all("td")
             id = "ncis1-"+tmp2[0].text
             title = tmp2[1].a.text
+            title = tr.translate(title, dest='ja').text
             updated = tmp2[3].text
             array.append({
                 "title":title,
@@ -82,6 +87,7 @@ def ncis():
             tmp2 = a.find_all("td")
             id = "ncis2-"+tmp2[0].text
             title = tmp2[1].a.text
+            title = tr.translate(title, dest='ja').text
             updated = tmp2[3].text
             array.append({
                 "title":title,
@@ -153,7 +159,7 @@ def echa():
             update = datetmp[2] + "-" + datetmp[1] + "-" + datetmp[0]
             array.append({
                 "title":tmp.dt.a.text,
-                "id":id,
+                "id":id[0:50],
                 "updated":update,
                 "site":"ECHA",
                 "link":"http://echa.europa.eu"+tmp.dt.a["href"]
@@ -235,7 +241,6 @@ def epa():
 def mepscc():
     array = []
     try:
-        tr = Translator()
         url = "http://www.mepscc.cn/zxly/hxpzwh/"
         l = urllib.request.urlopen(url)
         e = l.info().get_content_charset(failobj="utf-8")
@@ -280,6 +285,7 @@ def osha():
             tmp3 = tmp2[2].text.split("-")
             tmp4 = tmp2[0].a
             title = tmp4.text
+            title = tr.translate(title, dest='ja').text
             tmp5 = tmp4["href"].split("/")
             id = "osha-"+tmp5[-2]
             updated = str(int(tmp3[0])+1911)+"-"+tmp3[1]+"-"+tmp3[2]
@@ -311,6 +317,7 @@ def chemreg():
         tmp = soup.find_all("div", class_="news_list")
         for a in tmp:
             title = a.find(class_="sub_title").text[30:-26]
+            title = tr.translate(title, dest='ja').text
             tmp2 = a.find(class_="more").a["href"]
             id = "chemreg-"+tmp2.split("=")[1]
             tmp3 = a.find(class_="title").text.split(" ")
@@ -399,7 +406,7 @@ def meti():
                 updated = '{:0=4}-{:0=2}-{:0=2}'.format(year,month,day)
                 lupdated.append(updated)
             else:
-                updated = lupdated[-1][0:7]
+                updated = today
             link = "https://www.meti.go.jp"+a["href"]
             array.append({
                 "title": title,
@@ -440,7 +447,7 @@ def meti2():
                 updated = '{:0=4}-{:0=2}-{:0=2}'.format(year,month,day)
                 lupdated.append(updated)
             else:
-                updated = lupdated[-1][0:7]
+                updated = today
             link = "https://www.meti.go.jp"+a["href"]
             array.append({
                 "title": title,
@@ -527,4 +534,3 @@ if __name__ == "__main__":
         json.dump(array,f,indent=2)
         f.close()
 
-        
